@@ -24,7 +24,20 @@
         name: nginx
         state: started
         enabled: true
-        
+
+    - name: Upload JAR to EC2
+      copy:
+        src: target/{{ jar_file }}
+        dest: "{{ remote_path }}"
+        mode: '0755'
+
+    - name: Kill running Spring Boot app (if any)
+      shell: pkill -f "{{ jar_file }}"
+      ignore_errors: yes
+
+    - name: Run Spring Boot app in background
+      shell: "nohup java -jar {{ remote_path }}{{ jar_file }} > /home/ec2-user/app.log 2>&1 &"
+
     - name: Configure Nginx as reverse proxy
       copy:
         dest: /etc/nginx/conf.d/springapp.conf
@@ -45,16 +58,3 @@
       service:
         name: nginx
         state: reloaded
-
-    - name: Upload JAR to EC2
-      copy:
-        src: target/{{ jar_file }}
-        dest: "{{ remote_path }}"
-        mode: '0755'
-
-    - name: Kill running Spring Boot app (if any)
-      shell: pkill -f "{{ jar_file }}"
-      ignore_errors: yes
-
-    - name: Run Spring Boot app in background
-      shell: "nohup java -jar {{ remote_path }}{{ jar_file }} /home/ec2-user/app.log 2>&1 &"
