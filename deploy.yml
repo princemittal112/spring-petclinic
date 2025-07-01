@@ -1,14 +1,16 @@
 ---
 - name: Deploy Spring Boot JAR to EC2
-  hosts: appserver
+  hosts: all
   become: yes
+  collections:
+    - amazon.aws
   vars:
     jar_file: spring-petclinic-3.5.0-SNAPSHOT.jar
     remote_path: /home/ec2-user/
 
   tasks:
-    - name: Install Java 17 (Amazon Corretto)
-      amazon.aws.aws_package:
+    - name: Install Java 17
+      package:
         name: java-17-amazon-corretto
         state: present
 
