@@ -28,8 +28,8 @@
     - name: Download JAR from S3 to EC2
       amazon.aws.aws_s3:
         bucket: jenkins-s3-prince
-        object: "{{ jar_file }}"
-        dest: "{{ remote_path }}{{ jar_file }}"
+        object: spring-petclinic-3.5.0-SNAPSHOT.jar
+        dest: /home/ec2-user/spring-petclinic-3.5.0-SNAPSHOT.jar
         mode: get
         overwrite: true
 
