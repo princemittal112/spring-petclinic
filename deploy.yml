@@ -25,11 +25,13 @@
         state: started
         enabled: true
 
-    - name: Upload JAR to EC2
-      copy:
-        src: target/{{ jar_file }}
-        dest: "{{ remote_path }}"
-        mode: '0755'
+    - name: Download JAR from S3 to EC2
+      amazon.aws.aws_s3:
+        bucket: jenkins-s3-prince
+        object: "{{ jar_file }}"
+        dest: "{{ remote_path }}{{ jar_file }}"
+        mode: get
+        overwrite: true
 
     - name: Kill running Spring Boot app (if any)
       shell: pkill -f "{{ jar_file }}"
